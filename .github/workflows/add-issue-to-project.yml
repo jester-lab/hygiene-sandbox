@@ -11,19 +11,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up GitHub CLI
-        uses: cli/cli@latest
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Add Issue to Project
         run: |
           ISSUE_NUMBER=${{ github.event.issue.number }}
           PROJECT_ID="3947599" # Replace with your project ID
           STATUS_COLUMN="In_Progress" # Replace with your status column name
+          ISSUE_URL: ${{ github.event.issue.html_url }}
           
           # Add the issue to the project
-          gh project add "$PROJECT_ID" --issue "$ISSUE_NUMBER"
+          # gh project item-add --url "$ISSUE_URL" "$PROJECT_ID" --issue "$ISSUE_NUMBER"
+          gh project item-add "$PROJECT_ID" --owner jefeish --url "$ISSUE_URL"
+
           
           # Set the status for the issue in the project
           gh project column move "$ISSUE_NUMBER" --column "$STATUS_COLUMN"
