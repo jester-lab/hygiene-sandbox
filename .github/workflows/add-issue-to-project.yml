@@ -20,7 +20,7 @@ jobs:
         run: |
           ISSUE_NUMBER=${{ github.event.issue.number }}
           PROJECT_ID="3947599" # Replace with your project ID
-          STATUS_COLUMN="YOUR_STATUS_COLUMN" # Replace with your status column name
+          STATUS_COLUMN="In_Progress" # Replace with your status column name
           
           # Add the issue to the project
           gh project add "$PROJECT_ID" --issue "$ISSUE_NUMBER"
