@@ -19,7 +19,7 @@ jobs:
       - name: Add Issue to Project
         run: |
           ISSUE_NUMBER=${{ github.event.issue.number }}
-          PROJECT_ID="YOUR_PROJECT_ID" # Replace with your project ID
+          PROJECT_ID="3947599" # Replace with your project ID
           STATUS_COLUMN="YOUR_STATUS_COLUMN" # Replace with your status column name
           
           # Add the issue to the project
