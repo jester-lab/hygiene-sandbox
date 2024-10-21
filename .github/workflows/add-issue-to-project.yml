@@ -1,0 +1,29 @@
+name: Add Issue to Project
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  add-to-project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up GitHub CLI
+        uses: cli/cli@latest
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add Issue to Project
+        run: |
+          ISSUE_NUMBER=${{ github.event.issue.number }}
+          PROJECT_ID="YOUR_PROJECT_ID" # Replace with your project ID
+          STATUS_COLUMN="YOUR_STATUS_COLUMN" # Replace with your status column name
+          
+          # Add the issue to the project
+          gh project add "$PROJECT_ID" --issue "$ISSUE_NUMBER"
+          
+          # Set the status for the issue in the project
+          gh project column move "$ISSUE_NUMBER" --column "$STATUS_COLUMN"
