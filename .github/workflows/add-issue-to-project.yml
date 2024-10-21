@@ -5,7 +5,7 @@ on:
     types: [opened]
 
 jobs:
-  add-to-project:
+  add-issue-to-project:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
