@@ -15,14 +15,40 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PROJECT_ID: ${{ secrets.PROJECT_ID }}  # Reference the project ID from a secret
-          STATUS_COLUMN_ID: ${{ secrets.STATUS_COLUMN_ID }}  # Replace with the ID of the status column
+          STATUS_NAME: "In Progress"  # Replace with the desired status name
         run: |
           ISSUE_NUMBER=${{ github.event.issue.number }}
           REPO=${{ github.repository }}
 
-          # Add the issue to the project
+          # Fetch project columns to find the correct column ID (case-insensitive match)
+          COLUMN_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/projects/$PROJECT_ID/columns" | \
+            jq -r --arg status_name "$STATUS_NAME" '.[] | select(.name | ascii_downcase == ($status_name | ascii_downcase)) | .id')
+
+          # Check if the column ID was found
+          if [ -z "$COLUMN_ID" ]; then
+            echo "Error: Column '$STATUS_NAME' not found in project."
+            exit 1
+          fi
+
+          # Add the issue to the project column
           curl -X POST \
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/projects/$PROJECT_ID/columns/$STATUS_COLUMN_ID/cards \
+            "https://api.github.com/projects/$PROJECT_ID/columns/$COLUMN_ID/cards" \
+            -d "{\"content_id\": $ISSUE_NUMBER, \"content_type\": \"Issue\"}"
+
+
+          # Check if the column ID was found
+          if [ -z "$COLUMN_ID" ]; then
+            echo "Error: Column '$STATUS_NAME' not found in project."
+            exit 1
+          fi
+
+          # Add the issue to the project column
+          curl -X POST \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/projects/$PROJECT_ID/columns/$COLUMN_ID/cards" \
             -d "{\"content_id\": $ISSUE_NUMBER, \"content_type\": \"Issue\"}"
