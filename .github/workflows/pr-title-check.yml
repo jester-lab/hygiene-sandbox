@@ -1,0 +1,30 @@
+name: PR Title Check
+
+on:
+  pull_request:
+    types: [opened, edited]  # Trigger on PR creation or title edit
+
+jobs:
+  check-pr-title:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v3
+
+      - name: Check PR title for JIRA ticket
+        id: pr_title_check
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          echo "PR Title: $PR_TITLE"
+          
+          # Define the regex pattern for JIRA issue key (e.g., JIRA-1234)
+          PATTERN="JIRA-[0-9]\+"
+
+          # Check if the PR title matches the pattern
+          if [[ ! "$PR_TITLE" =~ $PATTERN ]]; then
+            echo "Error: PR title does not match the required format (e.g., JIRA-1234)"
+            exit 1
+          else
+            echo "PR title is valid"
+          fi
