@@ -20,7 +20,7 @@ jobs:
           
           # Define the regex pattern for JIRA issue key (e.g., JIRA-1234)
           PATTERN="\bJIRA-\d+\b"
-
+          echo "PATTERN=\"$PATTERN\""
           # Check if the PR title matches the pattern
           if [[ ! "$PR_TITLE" =~ $PATTERN ]]; then
             echo "Error: PR title does not match the required format (e.g., JIRA-1234)"
